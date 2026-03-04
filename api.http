@@ -1,0 +1,142 @@
+##########################################
+# OAI-PMH API - UNMSM Repository
+# Comparación con REST/CRUD tradicional
+##########################################
+
+# ============================================
+# 1. Identify (GET /api/info)
+# ============================================
+# ¿Para qué? Información del repositorio (nombre, admin, versión protocolo)
+# Equivale a: GET /api/info o GET /api/health en REST
+# Parámetros: Ninguno (solo verb=Identify)
+# Respuesta: Datos generales del servidor OAI-PMH
+
+GET http://localhost:8000/oai-pmh?verb=Identify
+
+###
+
+# ============================================
+# 2. ListMetadataFormats (GET /api/formats)
+# ============================================
+# ¿Para qué? Ver formatos de metadatos soportados (oai_dc, marc21, etc.)
+# Equivale a: GET /api/schemas o GET /api/formats en REST
+# Parámetros:
+#   - verb=ListMetadataFormats (obligatorio)
+#   - identifier=oai:unmsm:1 (opcional, formatos para un recurso específico)
+# Respuesta: Lista de prefijos disponibles (oai_dc en nuestro caso)
+
+GET http://localhost:8000/oai-pmh?verb=ListMetadataFormats
+
+###
+
+# Con identificador específico
+GET http://localhost:8000/oai-pmh?verb=ListMetadataFormats&identifier=oai:unmsm:1
+
+###
+
+# ============================================
+# 3. ListSets (GET /api/categories o GET /api/collections)
+# ============================================
+# ¿Para qué? Listar conjuntos/colecciones lógicas (tesis, artículos, libros)
+# Equivale a: GET /api/categories en REST
+# Parámetros: Ninguno (solo verb=ListSets)
+# Respuesta: Sets disponibles en el repositorio (ej: "publications", "theses")
+
+GET http://localhost:8000/oai-pmh?verb=ListSets
+
+###
+
+# ============================================
+# 4. ListIdentifiers (GET /api/publications?fields=id)
+# ============================================
+# ¿Para qué? Listar SOLO identificadores y fechas (sin metadatos completos)
+# Equivale a: GET /api/publications?fields=id,updated_at en REST
+# Parámetros:
+#   - verb=ListIdentifiers (obligatorio)
+#   - metadataPrefix=oai_dc (obligatorio)
+#   - from=2026-01-01 (opcional, fecha inicio)
+#   - until=2026-12-31 (opcional, fecha fin)
+#   - set=publications (opcional, filtrar por conjunto)
+# Respuesta: Lista ligera con identificadores (útil para sincronización)
+
+GET http://localhost:8000/oai-pmh?verb=ListIdentifiers&metadataPrefix=oai_dc
+
+###
+
+# Con filtro de fecha (harvesting incremental)
+GET http://localhost:8000/oai-pmh?verb=ListIdentifiers&metadataPrefix=oai_dc&from=2026-03-01
+
+###
+
+# ============================================
+# 5. ListRecords (GET /api/publications)
+# ============================================
+# ¿Para qué? Listar TODOS los registros con metadatos completos
+# Equivale a: GET /api/publications en REST (el READ clásico)
+# Parámetros:
+#   - verb=ListRecords (obligatorio)
+#   - metadataPrefix=oai_dc (obligatorio)
+#   - from=2026-01-01 (opcional)
+#   - until=2026-12-31 (opcional)
+#   - set=publications (opcional)
+# Respuesta: Registros completos con Dublin Core (title, author, description, etc.)
+
+GET http://localhost:8000/oai-pmh?verb=ListRecords&metadataPrefix=oai_dc
+
+###
+
+# Con filtro de fecha (harvesting incremental)
+GET http://localhost:8000/oai-pmh?verb=ListRecords&metadataPrefix=oai_dc&from=2026-03-01&until=2026-03-31
+
+###
+
+# ============================================
+# 6. GetRecord (GET /api/publications/:id)
+# ============================================
+# ¿Para qué? Obtener UN registro específico por identificador
+# Equivale a: GET /api/publications/1 en REST (el READ individual)
+# Parámetros:
+#   - verb=GetRecord (obligatorio)
+#   - identifier=oai:unmsm:1 (obligatorio, el ID interno)
+#   - metadataPrefix=oai_dc (obligatorio)
+# Respuesta: Un solo registro con metadatos completos
+
+GET http://localhost:8000/oai-pmh?verb=GetRecord&identifier=oai:unmsm:1&metadataPrefix=oai_dc
+
+###
+
+# Otros ejemplos
+GET http://localhost:8000/oai-pmh?verb=GetRecord&identifier=oai:unmsm:2&metadataPrefix=oai_dc
+
+###
+
+GET http://localhost:8000/oai-pmh?verb=GetRecord&identifier=oai:unmsm:3&metadataPrefix=oai_dc
+
+###
+
+# ============================================
+# ERRORES COMUNES (para testing)
+# ============================================
+
+# Error: falta parámetro verb
+GET http://localhost:8000/oai-pmh
+
+###
+
+# Error: verbo no reconocido
+GET http://localhost:8000/oai-pmh?verb=InvalidVerb
+
+###
+
+# Error: falta metadataPrefix en ListRecords
+GET http://localhost:8000/oai-pmh?verb=ListRecords
+
+###
+
+# Error: identificador no existe
+GET http://localhost:8000/oai-pmh?verb=GetRecord&identifier=oai:unmsm:999&metadataPrefix=oai_dc
+
+###
+
+# Error: formato no soportado
+GET http://localhost:8000/oai-pmh?verb=GetRecord&identifier=oai:unmsm:1&metadataPrefix=marc21

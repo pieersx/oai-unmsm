@@ -1,0 +1,67 @@
+# Laravel
+*.log
+.env
+.env.backup
+.env.production
+.env.local
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+/bootstrap/cache
+
+# Node
+/node_modules
+/public/build
+/public/hot
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Testing
+.phpunit.result.cache
+.phpunit.cache
+Homestead.json
+Homestead.yaml
+
+# IDEs
+.vscode
+.idea
+.fleet
+.nova
+.zed
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Composer
+auth.json
+.phpactor.json
+composer.lock
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs - VS Code, PhpStorm, etc.
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Local env overrides
+.env.local
+.env.*.local
+
+# Docker
+.docker/mysql/data
+.docker/redis/data
